@@ -1,0 +1,1 @@
+export const userMiddleware = (req: request, res: res,next)
