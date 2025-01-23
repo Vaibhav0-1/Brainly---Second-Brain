@@ -74,10 +74,9 @@ app.get("/api/v1/content", userMiddleware, async(req: any, res: any) => {
     const userId = req.userId;
     const content = await ContentModel.find({
         userId: userId
-    }).populate("userId", "username")
-    res.json({
-        content
     })
+    
+
 })
 
 app.delete("/api/v1/content", (req: any, res: any) => {
