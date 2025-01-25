@@ -90,7 +90,8 @@ app.delete("/api/v1/content", userMiddleware, async(req: any, res: any) => {
 })
 
 app.post("/api/v1/brain/share", (req: any, res: any) => {
-    const contentId = req.body.contentId;
+    contentId,
+        userId: req.userId
 })
 
 app.get("/api/v1/brain/:shareLink", (req: any, res: any) => {
