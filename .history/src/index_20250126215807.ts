@@ -87,9 +87,7 @@ app.delete("/api/v1/content", userMiddleware, async(req: any, res: any) => {
         contentId,
         userId: req.userId //user owns this content
     })
-    res.json({
-        message: "Content deleted"
-    })
+    res
 })
 
 app.post("/api/v1/brain/share", (req: any, res: any) => {

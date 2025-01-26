@@ -88,7 +88,7 @@ app.delete("/api/v1/content", userMiddleware, async(req: any, res: any) => {
         userId: req.userId //user owns this content
     })
     res.json({
-        message: "Content deleted"
+        
     })
 })
 
