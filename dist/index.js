@@ -17,6 +17,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_1 = require("./db");
 const config_1 = require("./config");
 const middleware_1 = require("./middleware");
+const db_2 = require("./db");
+const utils_1 = require("./utils");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.post("/api/v1/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -81,10 +83,72 @@ app.get("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter(
         content
     });
 }));
-app.delete("/api/v1/content", (req, res) => {
-});
-app.post("/api/v1/brain/share", (req, res) => {
-});
-app.get("/api/v1/brain/:shareLink", (req, res) => {
-});
+app.delete("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const contentId = req.body.contentId;
+    yield db_1.ContentModel.deleteMany({
+        contentId,
+        userId: req.userId //user owns this content
+    });
+    res.json({
+        message: "Content deleted"
+    });
+}));
+app.post("/api/v1/brain/share", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const share = req.body.share;
+    if (share) {
+        const existingLink = yield db_2.LinkModel.findOne({
+            userId: req.userId
+        });
+        if (existingLink) {
+            res.json({
+                hash: existingLink.hash
+            });
+            return;
+        }
+        const hash = (0, utils_1.random)(10);
+        db_2.LinkModel.create({
+            hash,
+            userId: req.userId,
+        });
+        res.json({
+            message: "/share/" + hash
+        });
+    }
+    else {
+        yield db_2.LinkModel.deleteOne({
+            userId: req.userId
+        });
+    }
+    res.json({
+        message: "Removed Link"
+    });
+}));
+app.get("/api/v1/brain/:shareLink", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const hash = req.params.shareLink; //thats how you get the url param like this
+    const link = yield db_2.LinkModel.findOne({
+        hash
+    });
+    if (!link) {
+        res.status(411).json({
+            message: "Sorry the link is invalid"
+        });
+        return;
+    }
+    const content = yield db_1.ContentModel.find({
+        userId: link.userId
+    });
+    const user = yield db_1.UserModel.findOne({
+        _id: link.userId
+    });
+    if (!user) {
+        res.status(411).json({
+            message: "user not found"
+        });
+        return;
+    }
+    res.json({
+        username: user.username,
+        content: content
+    });
+}));
 app.listen(3000);
