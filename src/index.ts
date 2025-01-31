@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { ContentModel, UserModel } from './db';
 import { JWT_PASSWORD } from './config';
 import { userMiddleware } from './middleware';
+import { LinkModel } from './db';
+import { random } from './utils';
 
 const app = express();
 app.use(express.json());
@@ -92,8 +94,22 @@ app.delete("/api/v1/content", userMiddleware, async(req: any, res: any) => {
     })
 })
 
-app.post("/api/v1/brain/share", (req: any, res: any) => {
-    const contentId = req.body.contentId;
+app.post("/api/v1/brain/share", userMiddleware, async(req: any, res: any) => {
+    const share = req.body.share;
+    if(share){
+        LinkModel.create({
+            hash: random(10),
+            userId: req.userId,
+        })
+    }else{
+        await LinkModel.deleteOne({
+            userId: req.userId
+        });
+    }
+
+    res.json({
+        message: "updated sharable Link"
+    })
 })
 
 app.get("/api/v1/brain/:shareLink", (req: any, res: any) => {
