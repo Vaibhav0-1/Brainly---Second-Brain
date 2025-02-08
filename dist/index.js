@@ -69,7 +69,9 @@ app.post("/api/v1/signin", (req, res) => __awaiter(void 0, void 0, void 0, funct
 app.post("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const link = req.body.link;
     const type = req.body.type;
+    const title = req.body.title;
     yield db_1.ContentModel.create({
+        title,
         link,
         type,
         userId: req.userId,

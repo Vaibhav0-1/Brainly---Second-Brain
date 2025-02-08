@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LinkModel = exports.ContentModel = exports.UserModel = void 0;
+exports.ContentModel = exports.LinkModel = exports.UserModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 mongoose_1.default.connect("mongodb://localhost:27017/brain");
 const UserSchema = new mongoose_1.Schema({
@@ -42,14 +42,15 @@ const UserSchema = new mongoose_1.Schema({
 });
 exports.UserModel = (0, mongoose_1.model)("User", UserSchema);
 const ContentSchema = new mongoose_1.Schema({
-    title: String,
+    title: { type: String, required: true },
     link: String,
     tags: [{ type: mongoose_1.default.Types.ObjectId, ref: 'Tag' }],
-    userId: [{ type: mongoose_1.default.Types.ObjectId, ref: 'User', required: true }]
+    type: String,
+    userId: { type: mongoose_1.default.Types.ObjectId, ref: 'User', required: true }
 });
-exports.ContentModel = (0, mongoose_1.model)("Content", ContentSchema);
 const LinkSchema = new mongoose_1.Schema({
     hash: String,
     userId: [{ type: mongoose_1.default.Types.ObjectId, ref: 'User', required: true, unique: true }]
 });
 exports.LinkModel = (0, mongoose_1.model)("Links", LinkSchema);
+exports.ContentModel = (0, mongoose_1.model)("Content", ContentSchema);
