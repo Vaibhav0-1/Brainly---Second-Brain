@@ -6,14 +6,10 @@ import { JWT_PASSWORD } from './config';
 import { userMiddleware } from './middleware';
 import { LinkModel } from './db';
 import { random } from './utils';
-import cors from "cors";
+import cors
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-    origin: "http://localhost:5173", 
-    credentials: true
-}));
 
 
 
